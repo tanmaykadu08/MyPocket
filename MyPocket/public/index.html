@@ -969,9 +969,9 @@
             <div class="card-sub">Expenses + auto</div>
           </div>
           <div class="card purple">
-            <div class="card-label">Monthly Savings</div>
+            <div class="card-label">Total Savings</div>
             <div class="card-value" id="d-savings">₹0</div>
-            <div class="card-sub" id="d-savings-pct">0% of income</div>
+            <div class="card-sub" id="d-savings-pct">Across all months</div>
           </div>
           <div class="card blue">
             <div class="card-label">Overall Wealth</div>
@@ -1439,13 +1439,14 @@
     // ── Data loading ──
     async function loadMonthData() {
       try {
-        const [income, expenses, autopay, settings] = await Promise.all([
+        const [income, expenses, autopay, settings, summary] = await Promise.all([
           api('GET', `/api/income?month=${currentMonth}`),
           api('GET', `/api/expenses?month=${currentMonth}`),
           api('GET', '/api/autopay'),
           api('GET', '/api/settings'),
+          api('GET', '/api/settings/summary'),
         ]);
-        cache = { income, expenses, autopay, settings };
+        cache = { income, expenses, autopay, settings, summary };
         renderAll();
       } catch (e) {
         if (e.message === 'Token expired' || e.message === 'Invalid token' || e.message.includes('No API') || e.message === 'Unexpected end of JSON input') {
@@ -1616,8 +1617,9 @@
       document.getElementById('dash-subtitle').textContent = 'Overview for ' + monthLabel;
       document.getElementById('d-income').textContent = fmt(totalIncome);
       document.getElementById('d-expenses').textContent = fmt(totalExpenses + totalAuto);
-      document.getElementById('d-savings').textContent = fmt(savings);
-      document.getElementById('d-savings-pct').textContent = pct + '% of income';
+      const totalSavings = cache.summary ? cache.summary.total_savings : savings;
+      document.getElementById('d-savings').textContent = fmt(totalSavings);
+      document.getElementById('d-savings-pct').textContent = 'Across all months';
       document.getElementById('d-balance').textContent = fmt(bankNow);
 
       const catTotals = {};

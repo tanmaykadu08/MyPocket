@@ -26,5 +26,24 @@ router.put('/', async (req, res) => {
   });
   res.json({ user_id: req.userId, bank_balance: parseFloat(bank_balance) });
 });
+// GET /api/settings/summary
+router.get('/summary', async (req, res) => {
+  const inc = await db.execute({ sql: 'SELECT SUM(amount) as total FROM income WHERE user_id = ?', args: [req.userId] });
+  const exp = await db.execute({ sql: 'SELECT SUM(amount) as total FROM expenses WHERE user_id = ?', args: [req.userId] });
+  
+  const months = await db.execute({ 
+    sql: 'SELECT count(DISTINCT month_key) as c FROM (SELECT month_key FROM income WHERE user_id = ? UNION SELECT month_key FROM expenses WHERE user_id = ?)', 
+    args: [req.userId, req.userId] 
+  });
+  
+  const auto = await db.execute({ sql: 'SELECT SUM(amount) as total FROM auto_payments WHERE user_id = ? AND active = 1', args: [req.userId] });
+  
+  const totalInc = inc.rows[0].total || 0;
+  const totalExp = exp.rows[0].total || 0;
+  const mCount = months.rows[0].c || 1; // At least 1 month
+  const totalAuto = (auto.rows[0].total || 0) * mCount;
+
+  res.json({ total_savings: totalInc - totalExp - totalAuto });
+});
 
 module.exports = router;
