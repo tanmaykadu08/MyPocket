@@ -1359,6 +1359,7 @@
           <div class="form-row three">
             <div class="form-group"><label>Category</label>
               <select id="exp-cat">
+                <option value="auto" selected>✨ Auto Classify</option>
                 <option value="food">🍔 Food</option>
                 <option value="transport">🚗 Transport</option>
                 <option value="bills">⚡ Bills</option>
@@ -1810,7 +1811,10 @@
       const desc = document.getElementById('exp-desc').value.trim();
       const amount = parseFloat(document.getElementById('exp-amount').value);
       const date = document.getElementById('exp-date').value;
-      const category = document.getElementById('exp-cat').value;
+      let category = document.getElementById('exp-cat').value;
+      if (category === 'auto') {
+         category = guessCategoryAI(desc) || 'other';
+      }
       const payment = document.getElementById('exp-pay').value;
       if (!desc || !amount || !date) return alert('Please fill description, amount, and date.');
       const btn = document.getElementById('exp-btn');
@@ -1828,6 +1832,11 @@
         }
         document.getElementById('exp-desc').value = '';
         document.getElementById('exp-amount').value = '';
+        
+        document.getElementById('exp-cat').value = 'auto';
+        const autoOpt = Array.from(document.getElementById('exp-cat').options).find(o => o.value === 'auto');
+        if(autoOpt) autoOpt.textContent = '✨ Auto Classify';
+
         renderAll();
       } catch (e) { alert(e.message); }
       finally { btn.disabled = false; }
@@ -2128,10 +2137,73 @@
         : '<tr><td colspan="5" class="empty-state">No transactions yet</td></tr>';
     }
 
+    // ── AI Category Guesser ──
+    const AI_KEYWORDS = {
+      food: ['burger', 'pizza', 'restaurant', 'mcdonalds', 'kfc', 'swiggy', 'zomato', 'grocery', 'supermarket', 'mart', 'food', 'lunch', 'dinner', 'breakfast', 'coffee', 'starbucks', 'cafe', 'tea', 'snacks', 'milk', 'water', 'biryani', 'blinkit', 'zepto', 'instamart', 'dominos', 'pizzahut'],
+      transport: ['uber', 'ola', 'auto', 'metro', 'bus', 'train', 'flight', 'petrol', 'fuel', 'diesel', 'taxi', 'parking', 'toll', 'ticket', 'cab', 'irctc', 'rapido', 'makemytrip', 'yatra', 'goibibo'],
+      bills: ['electricity', 'water', 'rent', 'wifi', 'internet', 'mobile', 'recharge', 'netflix', 'amazon', 'prime', 'subscription', 'bill', 'emi', 'insurance', 'ott', 'spotify', 'jio', 'airtel', 'vi', 'bsnl', 'bescom', 'act', 'hathway', 'dth', 'tata sky'],
+      shopping: ['amazon', 'flipkart', 'myntra', 'shoes', 'clothes', 'shirt', 'jeans', 'electronics', 'gift', 'shopping', 'mall', 'zara', 'h&m', 'ikea', 'ajio', 'meesho', 'nykaa', 'croma', 'reliance', 'pantaloons', 'lifestyle'],
+      health: ['pharmacy', 'medicine', 'doctor', 'hospital', 'clinic', 'medical', 'gym', 'fitness', 'therapy', 'health', 'pills', 'apollo', 'pharmeasy', 'netmeds', '1mg', 'cult', 'workout']
+    };
+
+    function guessCategoryAI(desc) {
+      if (!desc) return null;
+      const words = desc.toLowerCase().match(/[a-z0-9&]+/g) || [];
+      const scores = { food: 0, transport: 0, bills: 0, shopping: 0, health: 0, other: 0 };
+      let matched = false;
+      for (const word of words) {
+        for (const [cat, keywords] of Object.entries(AI_KEYWORDS)) {
+           if (keywords.some(k => word === k || (word.length >= 3 && (word.startsWith(k) || k.startsWith(word))))) {
+              scores[cat] += 1;
+              matched = true;
+           }
+        }
+      }
+      if (!matched) return null;
+      let bestCat = null, maxScore = 0;
+      for (const [cat, score] of Object.entries(scores)) {
+        if (score > maxScore) { maxScore = score; bestCat = cat; }
+      }
+      return bestCat;
+    }
+
+    function initAICategorizer() {
+      const expDescInput = document.getElementById('exp-desc');
+      const expCatSelect = document.getElementById('exp-cat');
+      if(expDescInput && expCatSelect) {
+         expDescInput.addEventListener('input', (e) => {
+             // Only guess if the user currently has the 'auto' option selected, so we don't annoy them
+             if (expCatSelect.value !== 'auto') return;
+             
+             const guessedCat = guessCategoryAI(e.target.value);
+             const autoOption = Array.from(expCatSelect.options).find(o => o.value === 'auto');
+             
+             if(autoOption) {
+                 if(guessedCat) {
+                     const emojiMap = {food:'🍔 ', transport:'🚗 ', bills:'⚡ ', shopping:'🛍️ ', health:'💊 ', other: '📦 '};
+                     const formattedCat = emojiMap[guessedCat] + guessedCat.charAt(0).toUpperCase() + guessedCat.slice(1);
+                     autoOption.textContent = `✨ Auto (${formattedCat})`;
+                 } else {
+                     autoOption.textContent = '✨ Auto Classify';
+                 }
+             }
+         });
+         
+         // If user manually changes it to another category, change the auto mode title back
+         expCatSelect.addEventListener('change', () => {
+             if (expCatSelect.value !== 'auto') {
+                 const autoOption = Array.from(expCatSelect.options).find(o => o.value === 'auto');
+                 if(autoOption) autoOption.textContent = '✨ Auto Classify';
+             }
+         });
+      }
+    }
+
     // ── Init ──
     function initApp() {
       initMonthSelect();
       loadMonthData();
+      initAICategorizer();
     }
 
     window.addEventListener('load', async () => {
