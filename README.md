@@ -50,7 +50,7 @@ Open http://localhost:3000
 
 ---
 
-## Deploy to Render (free tier)
+## Deploy to Render 
 
 ### Step 1 — Push to GitHub
 ```bash
