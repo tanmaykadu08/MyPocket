@@ -121,6 +121,14 @@
       overflow-x: hidden;
     }
 
+    .section:not(#sec-dashboard) {
+      background: var(--bg);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin: 24px auto;
+      max-width: 1200px;
+    }
+
     /* ── Auth screen ── */
     .auth-screen {
       min-height: 100vh;
@@ -1091,7 +1099,7 @@
   <div class="app-shell bg-surface text-on-surface" id="appShell">
 
     <!-- Tailwind Shell Sidebar -->
-    <aside class="sidebar hidden md:flex fixed left-0 top-0 h-full flex-col p-6 bg-slate-50 dark:bg-slate-900 w-64 border-r border-outline-variant/10 font-['Manrope'] text-sm tracking-tight z-50">
+    <aside class="tailwind-sidebar hidden md:flex fixed left-0 top-0 h-full flex-col p-6 bg-slate-50 dark:bg-slate-900 w-64 border-r border-outline-variant/10 font-['Manrope'] text-sm tracking-tight z-50">
       <div class="mb-10">
         <h1 class="text-xl font-bold tracking-tighter text-slate-900 dark:text-white">MyPocket</h1>
         <p class="text-[10px] uppercase tracking-widest text-slate-400 font-semibold mt-1">Money Manager</p>
@@ -1125,9 +1133,9 @@
         </button>
       </nav>
       <div class="mt-auto pt-6 space-y-2">
-         <div class="month-selector w-full mb-4">
-          <label style="font-size: 11px; text-transform: uppercase;">Viewing month</label>
-          <select id="monthSelect" onchange="onMonthChange(this)" style="width: 100%; background: transparent; color: inherit; padding: 4px; border:none; outline:none; cursor:pointer"></select>
+         <div class="month-selector w-full mb-4 text-slate-800">
+          <label class="text-slate-500 font-bold" style="font-size: 11px; text-transform: uppercase;">Viewing month</label>
+          <select id="monthSelect" onchange="onMonthChange(this)" class="w-full bg-slate-100 rounded-md p-2 mt-1 font-bold text-slate-800 outline-none cursor-pointer"></select>
         </div>
         <button class="w-full flex items-center gap-3 text-slate-500 dark:text-slate-400 px-4 py-3 hover:bg-slate-200/50 transition-colors rounded-xl" onclick="doLogout()">
           <span class="material-symbols-outlined" data-icon="logout">logout</span>
@@ -1154,7 +1162,7 @@
         </div>
         <div class="flex items-center gap-4 md:gap-6 ml-auto">
           <div class="month-selector md:hidden text-slate-800">
-            <select id="monthSelectMobile" onchange="onMonthChange(this)" style="font-size: 13px; background: transparent; padding: 4px; border:none; outline:none"></select>
+            <select id="monthSelectMobile" onchange="onMonthChange(this)" class="bg-slate-100 rounded-md p-1 font-bold text-slate-800 outline-none" style="font-size: 13px;"></select>
           </div>
           <div class="flex items-center gap-3 border-l pl-4 md:pl-6 border-outline-variant/30">
             <div class="text-right hidden sm:block">
@@ -1186,6 +1194,9 @@
             <div class="flex gap-3 hidden sm:flex">
                 <button class="px-6 py-3 gradient-brand text-white rounded-xl font-bold text-sm shadow-lg shadow-primary/20 flex items-center gap-2 transition-all" onclick="navigate('income')">
                   <span class="material-symbols-outlined text-sm" data-icon="add">add</span> Add Income
+                </button>
+                <button class="px-6 py-3 bg-red-500 hover:bg-red-600 text-white rounded-xl font-bold text-sm shadow-lg shadow-red-500/20 flex items-center gap-2 transition-all" onclick="navigate('expenses')">
+                  <span class="material-symbols-outlined text-sm" data-icon="remove">remove</span> Add Expense
                 </button>
             </div>
           </div>
