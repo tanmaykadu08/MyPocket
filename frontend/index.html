@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>MyPocket — Money Manager</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-secondary-fixed-variant": "#304671",
+                        "background": "#f8f9fa",
+                        "surface-dim": "#d9dadb",
+                        "secondary-fixed-dim": "#b1c6f9",
+                        "on-error": "#ffffff",
+                        "on-primary-fixed-variant": "#004395",
+                        "surface-container-high": "#e7e8e9",
+                        "primary-fixed-dim": "#adc6ff",
+                        "on-primary-container": "#fefcff",
+                        "inverse-on-surface": "#f0f1f2",
+                        "tertiary-container": "#b75b00",
+                        "error": "#ba1a1a",
+                        "surface-variant": "#e1e3e4",
+                        "secondary-fixed": "#d8e2ff",
+                        "on-primary-fixed": "#001a42",
+                        "on-surface": "#191c1d",
+                        "surface-container": "#edeeef",
+                        "on-secondary": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "on-primary": "#ffffff",
+                        "surface-bright": "#f8f9fa",
+                        "surface-container-low": "#f3f4f5",
+                        "on-tertiary-fixed": "#311400",
+                        "primary-fixed": "#d8e2ff",
+                        "primary": "#0058be",
+                        "on-background": "#191c1d",
+                        "primary-container": "#2170e4",
+                        "on-error-container": "#93000a",
+                        "secondary": "#495e8a",
+                        "on-tertiary": "#ffffff",
+                        "inverse-primary": "#adc6ff",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary-container": "#405682",
+                        "outline-variant": "#c2c6d6",
+                        "surface": "#f8f9fa",
+                        "secondary-container": "#b6ccff",
+                        "tertiary": "#924700",
+                        "on-tertiary-fixed-variant": "#723600",
+                        "on-secondary-fixed": "#001a42",
+                        "surface-tint": "#005ac2",
+                        "tertiary-fixed": "#ffdcc6",
+                        "on-surface-variant": "#424754",
+                        "inverse-surface": "#2e3132",
+                        "tertiary-fixed-dim": "#ffb786",
+                        "surface-container-highest": "#e1e3e4",
+                        "on-tertiary-container": "#fffbff",
+                        "outline": "#727785"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                },
+            },
+        }
+  </script>
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+  <!-- ── Auth Screen (Tailwind) ── -->
+  <div class="auth-screen min-h-screen flex items-center justify-center relative px-6 py-12 overflow-hidden w-full bg-surface" id="authScreen">
+      <!-- Abstract Background Elements -->
+      <div class="absolute inset-0 z-0 pointer-events-none">
+          <div class="absolute top-[-10%] right-[-5%] w-[600px] h-[600px] bg-primary/5 rounded-full blur-3xl"></div>
+          <div class="absolute bottom-[-10%] left-[-5%] w-[500px] h-[500px] bg-secondary/5 rounded-full blur-3xl"></div>
+          <img class="absolute inset-0 w-full h-full object-cover opacity-[0.03] mix-blend-multiply" alt="Abstract background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCXr5Ec4JP7j8K1A1fGZII_IAhNmNcGIniTjPSb8YzNYy03hbd__UvoLVP-AkN5CusiEoJ2dHXbhM7QbO_jfIs7ZXTOrHP8UQ1AcGDl2qzkORwV6k3uLPJ6eY3494fffq50-j93gWUvJrrwH93iooTjPVZ5TOW_0xMOoBDFondNhKlzTYsohFbZSkzr_WJjpSZ1d9Jm8KYO9Ek6vpl43tlHIJWQ-zT2Pqq3eGbDW9Ylf6ovCX6Lo_qJd7EqxnkydZkMkvqwtdl_7vuY"/>
+      </div>
+
+      <!-- Login/Register Container -->
+      <div class="relative z-10 w-full max-w-[480px]">
+          <!-- Brand Anchor -->
+          <div class="text-center mb-10">
+              <h1 class="font-headline font-extrabold text-4xl tracking-tighter text-on-surface mb-2">MyPocket</h1>
+              <p class="font-body text-on-surface-variant text-sm tracking-tight font-semibold uppercase">Precision Intelligence</p>
+          </div>
+
+          <div id="auth-error" style="display:none" class="text-error text-center text-sm mb-4 font-bold bg-error-container p-3 rounded-lg mx-auto"></div>
+
+          <!-- Form Card -->
+          <div class="bg-surface-container-lowest rounded-2xl shadow-xl shadow-slate-200/50 border border-outline-variant/10 p-8 md:p-10">
+              
+              <!-- Login Block -->
+              <div id="form-login">
+                  <div class="mb-8">
+                      <h2 class="font-headline font-bold text-2xl text-on-surface">Welcome back</h2>
+                      <p class="text-on-surface-variant text-sm mt-1">Please enter your details to access your portfolio.</p>
+                  </div>
+                  <div class="space-y-5">
+                      <!-- Email Input -->
+                      <div>
+                          <label class="block font-label text-sm font-medium text-slate-600 mb-2" for="login-email">Email Address</label>
+                          <div class="relative group">
+                              <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+                                  <span class="material-symbols-outlined text-[20px]">mail</span>
+                              </div>
+                              <input class="block w-full pl-11 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-lg text-slate-800 placeholder:text-slate-400 focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none" id="login-email" autocomplete="email" placeholder="name@company.com" type="email"/>
+                          </div>
+                      </div>
+                      <!-- Password Input -->
+                      <div>
+                          <div class="flex justify-between items-center mb-2">
+                              <label class="block font-label text-sm font-medium text-slate-600" for="login-password">Password</label>
+                          </div>
+                          <div class="relative group">
+                              <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+                                  <span class="material-symbols-outlined text-[20px]">lock</span>
+                              </div>
+                              <input class="block w-full pl-11 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-lg text-slate-800 placeholder:text-slate-400 focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none" id="login-password" autocomplete="current-password" placeholder="••••••••" type="password"/>
+                          </div>
+                      </div>
+                      <!-- Action Button -->
+                      <button class="w-full gradient-brand text-white font-headline font-bold py-4 rounded-lg shadow-lg hover:opacity-90 active:scale-[0.98] transition-all flex items-center justify-center gap-2 mt-2" id="login-btn" onclick="doLogin()">
+                          Sign In
+                          <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+                      </button>
+                  </div>
+
+                  <!-- Registration Link -->
+                  <div class="text-center mt-8 pt-6 border-t border-slate-100">
+                      <p class="text-slate-500 text-sm">
+                          Don't have an account yet? 
+                          <button class="font-bold text-primary hover:text-primary-container transition-colors ml-1" id="tab-register" onclick="switchTab('register')">Create an Account</button>
+                      </p>
+                  </div>
+              </div>
+
+              <!-- Register Block (hidden initially) -->
+              <div id="form-register" style="display:none">
+                  <div class="mb-8">
+                      <h2 class="font-headline font-bold text-2xl text-on-surface">Join MyPocket</h2>
+                      <p class="text-on-surface-variant text-sm mt-1">Start managing your wealth with precision.</p>
+                  </div>
+                  <div class="space-y-5">
+                      <!-- Name Input -->
+                      <div>
+                          <label class="block font-label text-sm font-medium text-slate-600 mb-2" for="reg-name">Full Name</label>
+                          <div class="relative group">
+                              <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+                                  <span class="material-symbols-outlined text-[20px]">person</span>
+                              </div>
+                              <input class="block w-full pl-11 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-lg text-slate-800 placeholder:text-slate-400 focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none" id="reg-name" placeholder="John Doe (optional)" type="text"/>
+                          </div>
+                      </div>
+                      <!-- Email Input -->
+                      <div>
+                          <label class="block font-label text-sm font-medium text-slate-600 mb-2" for="reg-email">Email Address</label>
+                          <div class="relative group">
+                              <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+                                  <span class="material-symbols-outlined text-[20px]">mail</span>
+                              </div>
+                              <input class="block w-full pl-11 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-lg text-slate-800 placeholder:text-slate-400 focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none" id="reg-email" autocomplete="email" placeholder="name@company.com" type="email"/>
+                          </div>
+                      </div>
+                      <!-- Password Input -->
+                      <div>
+                          <div class="flex justify-between items-center mb-2">
+                              <label class="block font-label text-sm font-medium text-slate-600" for="reg-password">Password</label>
+                          </div>
+                          <div class="relative group">
+                              <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+                                  <span class="material-symbols-outlined text-[20px]">lock</span>
+                              </div>
+                              <input class="block w-full pl-11 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-lg text-slate-800 placeholder:text-slate-400 focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none" id="reg-password" autocomplete="new-password" placeholder="Min 6 chars" type="password"/>
+                          </div>
+                      </div>
+                      <!-- Action Button -->
+                      <button class="w-full gradient-brand text-white font-headline font-bold py-4 rounded-lg shadow-lg hover:opacity-90 active:scale-[0.98] transition-all flex items-center justify-center gap-2 mt-2" id="reg-btn" onclick="doRegister()">
+                          Create Account
+                          <span class="material-symbols-outlined text-[18px]">person_add</span>
+                      </button>
+                  </div>
+
+                  <!-- Login Link -->
+                  <div class="text-center mt-8 pt-6 border-t border-slate-100">
+                      <p class="text-slate-500 text-sm">
+                          Already have an account? 
+                          <button class="font-bold text-primary hover:text-primary-container transition-colors ml-1" id="tab-login" onclick="switchTab('login')">Sign In</button>
+                      </p>
+                  </div>
+              </div>
+          </div>
+
+          <!-- Backend Syncer Setup -->
+          <div id="apiUrlSection" class="mt-8 text-center bg-surface-container-lowest/50 backdrop-blur-md rounded-xl p-6 border border-outline-variant/20 shadow-sm max-w-sm mx-auto">
+              <div class="text-xs text-slate-500 uppercase tracking-widest font-bold mb-3 flex items-center justify-center gap-1">
+                  <span class="material-symbols-outlined text-[16px]">cloud_sync</span> Backend Syncer
+              </div>
+              <div class="flex gap-2">
+                  <input class="flex-1 px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm text-slate-700 outline-none focus:border-primary focus:ring-2 focus:ring-primary transition-all" id="apiUrlInput" placeholder="https://your-app.onrender.com" />
+                  <button class="bg-primary text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-primary-container transition-colors shadow-sm" onclick="saveApiUrl()">Save</button>
+              </div>
+              <div id="apiStatus" class="mt-3 text-xs text-slate-400 font-medium"></div>
+          </div>
+
+          <!-- Trust Badge / Security Info (Floating Area) -->
+          <div class="mt-12 flex justify-center items-center gap-3 opacity-60">
+              <span class="material-symbols-outlined text-slate-400 text-xl" style="font-variation-settings: 'FILL' 1;">verified_user</span>
+              <div class="text-left leading-tight">
+                  <p class="font-headline font-bold text-[10px] uppercase tracking-wider text-slate-500">256-bit AES Encryption</p>
+                  <p class="text-[9px] text-slate-400">Your financial data is always secure</p>
+              </div>
+          </div>
+
+      </div>
+  </div>
+
+  <!-- ── App Shell ── -->
+  <div class="app-shell bg-surface text-on-surface" id="appShell">
+
+    <!-- Tailwind Shell Sidebar -->
+    <aside class="tailwind-sidebar hidden md:flex fixed left-0 top-0 h-full flex-col p-6 bg-slate-50 dark:bg-slate-900 w-64 border-r border-outline-variant/10 font-['Manrope'] text-sm tracking-tight z-50">
+      <div class="mb-10">
+        <h1 class="text-xl font-bold tracking-tighter text-slate-900 dark:text-white">MyPocket</h1>
+        <p class="text-[10px] uppercase tracking-widest text-slate-400 font-semibold mt-1">Money Manager</p>
+      </div>
+      <nav class="flex-1 space-y-2">
+        <button class="w-full flex items-center gap-3 text-slate-500 dark:text-slate-400 px-4 py-3 hover:bg-slate-200/50 dark:hover:bg-slate-800 transition-colors rounded-xl font-semibold" onclick="navigate('dashboard')" id="nav-dashboard">
+          <span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+          <span>Dashboard</span>
+        </button>
+        <button class="w-full flex items-center gap-3 text-slate-500 dark:text-slate-400 px-4 py-3 hover:bg-slate-200/50 dark:hover:bg-slate-800 transition-colors rounded-xl font-semibold" onclick="navigate('report')" id="nav-report">
+          <span class="material-symbols-outlined" data-icon="receipt_long">receipt_long</span>
+          <span>Transactions</span>
+        </button>
+        <!-- User asked to link Goals to Savings -->
+        <button class="w-full flex items-center gap-3 text-slate-500 dark:text-slate-400 px-4 py-3 hover:bg-slate-200/50 dark:hover:bg-slate-800 transition-colors rounded-xl font-semibold" onclick="navigate('savings')" id="nav-goals">
+          <span class="material-symbols-outlined" data-icon="track_changes">track_changes</span>
+          <span>Goals</span>
+        </button>
+        <!-- User asked to stub out Budget -->
+        <button class="w-full flex items-center gap-3 text-slate-500 dark:text-slate-400 px-4 py-3 hover:bg-slate-200/50 dark:hover:bg-slate-800 transition-colors rounded-xl font-semibold" onclick="alert('Budget module coming soon!')" id="nav-budget">
+          <span class="material-symbols-outlined" data-icon="account_balance_wallet">account_balance_wallet</span>
+          <span>Budget</span>
+        </button>
+        <button class="w-full flex items-center gap-3 text-slate-500 dark:text-slate-400 px-4 py-3 hover:bg-slate-200/50 dark:hover:bg-slate-800 transition-colors rounded-xl font-semibold" onclick="navigate('income')" id="nav-income">
+          <span class="material-symbols-outlined" data-icon="savings">savings</span>
+          <span>Income</span>
+        </button>
+         <button class="w-full flex items-center gap-3 text-slate-500 dark:text-slate-400 px-4 py-3 hover:bg-slate-200/50 dark:hover:bg-slate-800 transition-colors rounded-xl font-semibold" onclick="navigate('autopay')" id="nav-autopay">
+          <span class="material-symbols-outlined" data-icon="currency_exchange">currency_exchange</span>
+          <span>Auto Payments</span>
+        </button>
+      </nav>
+      <div class="mt-auto pt-6 space-y-2">
+         <div class="month-selector w-full mb-4 text-slate-800">
+          <label class="text-slate-500 font-bold" style="font-size: 11px; text-transform: uppercase;">Viewing month</label>
+          <select id="monthSelect" onchange="onMonthChange(this)" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 mt-1 font-bold text-slate-800 outline-none focus:ring-2 focus:ring-primary cursor-pointer transition-all"></select>
+        </div>
+        <button class="w-full flex items-center gap-3 text-slate-500 dark:text-slate-400 px-4 py-3 hover:bg-slate-200/50 transition-colors rounded-xl" onclick="doLogout()">
+          <span class="material-symbols-outlined" data-icon="logout">logout</span>
+          <span>Log Out</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Mobile Nav Override (Hidden on desktop) -->
+    <div class="md:hidden fixed bottom-0 left-0 right-0 bg-slate-50 dark:bg-slate-900 border-t border-outline-variant/10 p-3 flex justify-around z-50">
+        <button class="p-2 text-primary" onclick="navigate('dashboard')"><span class="material-symbols-outlined">dashboard</span></button>
+        <button class="p-2 text-slate-500" onclick="navigate('income')"><span class="material-symbols-outlined">savings</span></button>
+        <button class="p-2 text-slate-500" onclick="navigate('expenses')"><span class="material-symbols-outlined">account_balance_wallet</span></button>
+        <button class="p-2 text-slate-500" onclick="navigate('savings')"><span class="material-symbols-outlined">track_changes</span></button>
+        <button class="p-2 text-slate-500" onclick="navigate('report')"><span class="material-symbols-outlined">receipt_long</span></button>
+    </div>
+
+    <!-- Main Content Shell -->
+    <div class="md:ml-64 w-full flex flex-col items-stretch">
+      <!-- TopNavBar Shell -->
+      <header class="flex justify-between items-center h-20 px-4 md:px-8 w-full sticky top-0 z-40 bg-surface/80 backdrop-blur-md border-b border-outline-variant/10 shadow-sm font-['Manrope'] font-medium text-slate-800">
+        <div class="flex items-center flex-1 max-w-xl">
+           <div class="md:hidden mr-4 text-xl font-bold font-headline text-slate-900 dark:text-white">MyPocket</div>
+        </div>
+        <div class="flex items-center gap-4 md:gap-6 ml-auto">
+          <div class="month-selector md:hidden text-slate-800">
+            <select id="monthSelectMobile" onchange="onMonthChange(this)" class="bg-slate-50 border border-slate-200 rounded-lg p-1.5 font-bold text-slate-800 outline-none focus:ring-2 focus:ring-primary transition-all" style="font-size: 13px;"></select>
+          </div>
+          <div class="flex items-center gap-3 border-l pl-4 md:pl-6 border-outline-variant/30">
+            <div class="text-right hidden sm:block">
+              <p class="text-xs font-bold" id="sidebarUser">User</p>
+              <p class="text-[10px] text-on-surface-variant">Default Account</p>
+              <p class="hidden" id="mobileUser">User</p> <!-- hidden fallback element for JS -->
+            </div>
+            <div id="userInitial" class="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold">
+               U
+            </div>
+             <button class="md:hidden p-2 text-slate-500" onclick="doLogout()"><span class="material-symbols-outlined text-sm">logout</span></button>
+          </div>
+        </div>
+      </header>
+
+      <main class="flex-1 w-full relative">
+
+      <!-- DASHBOARD (Tailwind Wallet Design) -->
+      <div class="section active p-4 md:p-8 w-full max-w-7xl mx-auto" id="sec-dashboard">
+        <!-- Hero Balance Section -->
+        <section class="mb-12">
+          <div class="flex justify-between items-end mb-6">
+            <div>
+              <p class="text-on-surface-variant font-medium tracking-tight mb-1">Total Net Worth</p>
+              <h2 class="text-4xl md:text-5xl font-extrabold font-headline tracking-tighter text-on-surface flex items-baseline">
+                <span class="text-primary text-2xl md:text-3xl font-bold mr-1"></span><span id="d-balance">₹0</span>
+              </h2>
+            </div>
+            <div class="flex gap-3 hidden sm:flex">
+                <button class="px-6 py-3 gradient-brand text-white rounded-xl font-bold text-sm shadow-lg shadow-primary/20 flex items-center gap-2 transition-all" onclick="navigate('income')">
+                  <span class="material-symbols-outlined text-sm" data-icon="add">add</span> Add Income
+                </button>
+                <button class="px-6 py-3 bg-red-500 hover:bg-red-600 text-white rounded-xl font-bold text-sm shadow-lg shadow-red-500/20 flex items-center gap-2 transition-all" onclick="navigate('expenses')">
+                  <span class="material-symbols-outlined text-sm" data-icon="remove">remove</span> Add Expense
+                </button>
+            </div>
+          </div>
+          <!-- Account Cards Bento Grid -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Total Income -->
+            <div class="bg-surface-container-lowest p-6 rounded-[2rem] border border-outline-variant/10 shadow-sm group hover:shadow-md transition-shadow">
+              <div class="flex justify-between items-start mb-10">
+                <div class="w-12 h-12 rounded-2xl bg-blue-50 flex items-center justify-center text-primary">
+                  <span class="material-symbols-outlined" data-icon="account_balance">account_balance</span>
+                </div>
+                <span class="text-[10px] font-bold px-2 py-1 bg-green-100 text-green-700 rounded-lg">This Month</span>
+              </div>
+              <div>
+                <p class="text-sm font-medium text-slate-500 mb-1">Total Income</p>
+                <p class="text-2xl font-bold font-headline text-slate-800" id="d-income">₹0</p>
+                <p class="text-[10px] text-slate-400 mt-2 tracking-widest" id="dash-subtitle">Overview</p>
+              </div>
+            </div>
+            <!-- Total Spent -->
+            <div class="bg-surface-container-lowest p-6 rounded-[2rem] border border-outline-variant/10 shadow-sm group hover:shadow-md transition-shadow">
+              <div class="flex justify-between items-start mb-10">
+                <div class="w-12 h-12 rounded-2xl bg-orange-50 flex items-center justify-center text-orange-600">
+                  <span class="material-symbols-outlined" data-icon="shopping_cart">shopping_cart</span>
+                </div>
+                <span class="text-[10px] font-bold px-2 py-1 bg-orange-100 text-orange-700 rounded-lg">Outflow</span>
+              </div>
+              <div>
+                <p class="text-sm font-medium text-slate-500 mb-1">Total Spent</p>
+                <p class="text-2xl font-bold font-headline text-slate-800" id="d-expenses">₹0</p>
+                <p class="text-[10px] text-slate-400 mt-2 tracking-widest">Expenses + Auto</p>
+              </div>
+            </div>
+            <!-- Savings -->
+            <div class="bg-surface-container-lowest p-6 rounded-[2rem] border border-outline-variant/10 shadow-sm group hover:shadow-md transition-shadow">
+              <div class="flex justify-between items-start mb-10">
+                <div class="w-12 h-12 rounded-2xl bg-purple-50 flex items-center justify-center text-purple-600">
+                  <span class="material-symbols-outlined" data-icon="savings">savings</span>
+                </div>
+                <span class="text-[10px] font-bold px-2 py-1 bg-purple-100 text-purple-700 rounded-lg" id="d-savings-pct">Global</span>
+              </div>
+              <div>
+                <p class="text-sm font-medium text-slate-500 mb-1">Total Savings</p>
+                <p class="text-2xl font-bold font-headline text-slate-800" id="d-savings">₹0</p>
+                <p class="text-[10px] text-slate-400 mt-2 tracking-widest">Across all months</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Insights Section -->
+        <section class="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-12">
+            <!-- Line Graph -->
+            <div class="lg:col-span-8 bg-surface-container-lowest p-8 rounded-[2.5rem] border border-outline-variant/10">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-lg font-bold font-headline text-slate-900">Transactions Overview</h3>
+                    <div class="flex gap-2">
+                        <span class="px-3 py-1 bg-slate-100 text-slate-600 rounded-full text-[10px] font-bold tracking-wider">1M</span>
+                    </div>
+                </div>
+                <div class="w-full h-[250px] relative">
+                    <canvas id="txGraphCanvas"></canvas>
+                </div>
+            </div>
+
+            <!-- Spending by Category Donut -->
+            <div class="lg:col-span-4 bg-surface-container-lowest p-8 rounded-[2.5rem] border border-outline-variant/10 flex flex-col justify-between">
+                <div>
+                    <h3 class="text-lg font-bold font-headline text-slate-900">Spending</h3>
+                    <p class="text-xs text-slate-500">Category breakdown</p>
+                </div>
+                <div class="w-full h-[180px] my-6 relative flex justify-center items-center">
+                    <canvas id="spendChartCanvas"></canvas>
+                    <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                        <span class="text-2xl font-bold font-headline text-slate-900" id="donutTotal">₹0</span>
+                        <span class="text-[9px] uppercase tracking-widest text-slate-400 font-bold">Spent</span>
+                    </div>
+                </div>
+                <div id="cat-legend" class="space-y-3">
+                    <!-- JS populates legend here. -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Recent Activities Section -->
+        <section>
+          <div class="flex justify-between items-center mb-6">
+            <h3 class="text-xl font-bold font-headline tracking-tight text-slate-900">Recent Activity</h3>
+            <button class="text-primary font-bold text-sm hover:underline" onclick="navigate('report')">View All History</button>
+          </div>
+          <div class="bg-surface-container-lowest rounded-[2.5rem] border border-outline-variant/10 overflow-hidden">
+            <div class="divide-y divide-outline-variant/10" id="recent-tbody">
+                <!-- JS Populates Activity Items Here -->
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- INCOME -->
+      <div class="section" id="sec-income">
+        <div class="page-header">
+          <h1>Income</h1>
+          <p>Record your monthly earnings</p>
+        </div>
+        <div class="form-card">
+          <div class="form-title">Add income source</div>
+          <div class="form-row three">
+            <div class="form-group"><label>Source / label</label><input id="inc-label"
+                placeholder="e.g. Salary, Freelance" /></div>
+            <div class="form-group"><label>Amount (₹)</label><input id="inc-amount" type="number" placeholder="0" />
+            </div>
+            <div class="form-group"><label>Date received</label><input id="inc-date" type="date" /></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label>Notes (optional)</label><input id="inc-notes" placeholder="Optional note" />
+            </div>
+            <div class="form-group" style="justify-content:flex-end;flex-direction:row;align-items:flex-end">
+              <button class="btn btn-primary" id="inc-btn" onclick="addIncome()">+ Add income</button>
+            </div>
+          </div>
+        </div>
+        <div class="table-card">
+          <div class="table-header">
+            <h3>Income this month</h3><span id="inc-total-label"
+              style="color:var(--accent-green);font-weight:700;font-size:16px"></span>
+          </div>
+          <div class="table-responsive">
+            <table>
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Source</th>
+                  <th>Notes</th>
+                  <th style="text-align:right">Amount</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="income-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- EXPENSES -->
+      <div class="section" id="sec-expenses">
+        <div class="page-header">
+          <h1>Expenses</h1>
+          <p>Track every rupee spent securely</p>
+        </div>
+        <div class="form-card">
+          <div class="form-title">Add expense</div>
+          <div class="form-row three">
+            <div class="form-group"><label>Description</label><input id="exp-desc" placeholder="e.g. Grocery, Zomato" />
+            </div>
+            <div class="form-group"><label>Amount (₹)</label><input id="exp-amount" type="number" placeholder="0" />
+            </div>
+            <div class="form-group"><label>Date</label><input id="exp-date" type="date" /></div>
+          </div>
+          <div class="form-row three">
+            <div class="form-group"><label>Category</label>
+              <select id="exp-cat">
+                <option value="auto" selected>✨ Auto Classify</option>
+                <option value="food">🍔 Food</option>
+                <option value="transport">🚗 Transport</option>
+                <option value="bills">⚡ Bills</option>
+                <option value="shopping">🛍️ Shopping</option>
+                <option value="health">💊 Health</option>
+                <option value="other">📦 Other</option>
+              </select>
+            </div>
+            <div class="form-group"><label>Payment type</label>
+              <select id="exp-pay">
+                <option>UPI</option>
+                <option>Cash</option>
+                <option>Card</option>
+                <option>Net Banking</option>
+              </select>
+            </div>
+            <div class="form-group" style="justify-content:flex-end;flex-direction:row;align-items:flex-end">
+              <button class="btn btn-primary" id="exp-btn" onclick="addExpense()">+ Add expense</button>
+            </div>
+          </div>
+        </div>
+        <div class="table-card">
+          <div class="table-header">
+            <h3>Expenses this month</h3><span id="exp-total-label"
+              style="color:var(--accent-red);font-weight:700;font-size:16px"></span>
+          </div>
+          <div class="table-responsive">
+            <table>
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Description</th>
+                  <th>Category</th>
+                  <th>Payment</th>
+                  <th style="text-align:right">Amount</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="exp-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- AUTO PAYMENTS -->
+      <div class="section" id="sec-autopay">
+        <div class="page-header">
+          <h1>Auto Payments</h1>
+          <p>Fixed recurring debits automatically deducted</p>
+        </div>
+        <div class="form-card">
+          <div class="form-title">Add auto payment</div>
+          <div class="form-row three">
+            <div class="form-group"><label>Name / merchant</label><input id="ap-name"
+                placeholder="e.g. Netflix, Rent" /></div>
+            <div class="form-group"><label>Amount (₹)</label><input id="ap-amount" type="number" placeholder="0" />
+            </div>
+            <div class="form-group"><label>Due day (1–31)</label><input id="ap-day" type="number" min="1" max="31"
+                placeholder="e.g. 5" /></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label>Payment method</label>
+              <select id="ap-pay">
+                <option>Auto debit</option>
+                <option>UPI</option>
+                <option>Card</option>
+                <option>Net Banking</option>
+              </select>
+            </div>
+            <div class="form-group" style="flex-direction:row;align-items:flex-end;justify-content:flex-end">
+              <button class="btn btn-primary" id="ap-btn" onclick="addAutoPay()">+ Add</button>
+            </div>
+          </div>
+        </div>
+        <div class="form-card" style="padding:0;overflow:hidden">
+          <div class="table-header">
+            <h3>Active auto payments</h3><span id="ap-total-label"
+              style="color:var(--accent-amber);font-weight:700;font-size:16px"></span>
+          </div>
+          <div id="ap-list"></div>
+        </div>
+      </div>
+
+      <!-- SAVINGS -->
+      <div class="section" id="sec-savings">
+        <div class="page-header">
+          <h1>Savings</h1>
+          <p>What you keep after all spending</p>
+        </div>
+        <div class="form-card">
+          <div class="form-title">Set opening bank balance</div>
+          <div class="form-row">
+            <div class="form-group"><label>Your current bank balance (₹)</label><input id="bank-balance-input"
+                type="number" placeholder="Enter opening balance" /></div>
+            <div class="form-group" style="flex-direction:row;align-items:flex-end">
+              <button class="btn btn-primary" onclick="setBankBalance()">Save Limit</button>
+            </div>
+          </div>
+        </div>
+        <div class="form-card">
+          <div class="savings-ring">
+            <div class="ring-wrap">
+              <svg viewBox="0 0 110 110">
+                <circle cx="55" cy="55" r="46" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="8" />
+                <circle id="savings-ring-circle" cx="55" cy="55" r="46" fill="none" stroke="#34d399" stroke-width="8"
+                  stroke-linecap="round" stroke-dasharray="289" stroke-dashoffset="289"
+                  style="transition:stroke-dashoffset 0.8s cubic-bezier(0.4, 0, 0.2, 1)" />
+              </svg>
+              <div class="ring-center">
+                <div class="pct" id="sav-pct">0%</div>
+                <div class="lbl">saved</div>
+              </div>
+            </div>
+            <div style="flex:1;">
+              <div style="font-size:13px;color:var(--muted);margin-bottom:8px;font-weight:500;">Monthly savings</div>
+              <h3 id="sav-amount"
+                style="font-size:32px; font-weight:700; color:var(--accent-green); letter-spacing:-1px;">₹0</h3>
+              <p id="sav-breakdown" style="font-size:13px; color:var(--muted); margin-top:8px;">₹0 income − ₹0 expenses
+                − ₹0 auto</p>
+            </div>
+          </div>
+          <div id="sav-bars"></div>
+        </div>
+        <div class="cards-row" style="grid-template-columns:1fr 1fr; gap:20px;">
+          <div class="card green">
+            <div class="card-label">Total income</div>
+            <div class="card-value" id="sav-inc">₹0</div>
+          </div>
+          <div class="card blue">
+            <div class="card-label">Bank balance (with savings)</div>
+            <div class="card-value" id="sav-bank">₹0</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- REPORT -->
+      <div class="section" id="sec-report">
+        <div class="page-header">
+          <h1>Monthly Report</h1>
+          <p id="report-title">Full breakdown</p>
+        </div>
+        <div id="report-alert"></div>
+        <div class="form-card">
+          <div class="form-row" style="margin-bottom: 32px;">
+            <div style="padding-right: 20px;">
+              <div
+                style="font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; margin-bottom:16px; font-weight:600;">
+                Income Sources</div>
+              <div id="report-income-list" style="margin-bottom:16px;"></div>
+              <div
+                style="display:flex; justify-content:space-between; padding:16px 0 0; border-top:1px solid var(--border); font-weight:600;">
+                <span>Total income</span><span style="color:var(--accent-green)" id="report-inc-total">₹0</span></div>
+            </div>
+            <div style="padding-left: 20px; border-left: 1px solid var(--border);">
+              <div
+                style="font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; margin-bottom:16px; font-weight:600;">
+                Auto Payments</div>
+              <div id="report-auto-list" style="margin-bottom:16px;"></div>
+              <div
+                style="display:flex; justify-content:space-between; padding:16px 0 0; border-top:1px solid var(--border); font-weight:600;">
+                <span>Total auto</span><span style="color:var(--accent-amber)" id="report-auto-total">₹0</span></div>
+            </div>
+          </div>
+          <div>
+            <div
+              style="font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; margin-bottom:16px; font-weight:600;">
+              Manual Expenses</div>
+            <div id="report-exp-list" style="margin-bottom:16px;"></div>
+            <div
+              style="display:flex; justify-content:space-between; padding:16px 0 0; border-top:1px solid var(--border); font-weight:600;">
+              <span>Total expenses</span><span style="color:var(--accent-red)" id="report-exp-total">₹0</span></div>
+          </div>
+          <div
+            style="border-top:1px solid var(--border); background:rgba(255,255,255,0.02); margin:-28px -28px 0 -28px; margin-top:32px; padding:28px; border-radius:0 0 var(--radius) var(--radius);">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span style="font-size:18px; font-weight:600;">Net savings this month</span>
+              <span id="report-net-savings"
+                style="font-size:28px; font-weight:700; color:var(--accent-green); letter-spacing:-0.5px;">₹0</span>
+            </div>
+          </div>
+        </div>
+        <div class="table-card">
+          <div class="table-header">
+            <h3>All transactions</h3>
+          </div>
+          <div class="table-responsive">
+            <table>
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Description</th>
+                  <th>Category</th>
+                  <th>Payment</th>
+                  <th style="text-align:right">Amount</th>
+                </tr>
+              </thead>
+              <tbody id="report-all-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+
+</html>

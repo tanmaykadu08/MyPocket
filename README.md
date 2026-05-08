@@ -1,93 +1,75 @@
-# Paisa — Money Manager Backend
+# MyPocket — Money Manager
 
-Node.js + Express + SQLite backend with JWT auth. Deploy to Render in minutes.
+MyPocket is a modern, serverless money management application. It features a blazing-fast frontend deployed on Vercel, and a scalable backend powered by Cloudflare Workers and a Turso database.
 
 ---
 
-## Project structure
+## Project Structure
 
 ```
-paisa-backend/
-├── src/
-│   ├── index.js              ← Express app entry point
-│   ├── db.js                 ← SQLite setup & schema
-│   ├── auth.js               ← JWT middleware
-│   └── routes/
-│       ├── authRoutes.js     ← POST /api/auth/register|login
-│       ├── incomeRoutes.js   ← GET/POST/DELETE /api/income
-│       ├── expenseRoutes.js  ← GET/POST/DELETE /api/expenses
-│       ├── autopayRoutes.js  ← GET/POST/PATCH/DELETE /api/autopay
-│       └── settingsRoutes.js ← GET/PUT /api/settings
-├── public/
-│   └── index.html            ← Frontend (served by backend)
-├── render.yaml               ← Render deployment config
-├── package.json
+mypocket/
+├── backend/                  ← Cloudflare Worker Backend (Hono)
+│   ├── src/
+│   │   ├── index.js          ← Main Hono application & CORS setup
+│   │   ├── db.js             ← Turso Database connection client
+│   │   ├── auth.js           ← JWT authentication middleware
+│   │   └── routes/           ← API Route Handlers
+│   ├── package.json          ← Backend dependencies
+│   └── wrangler.toml         ← Cloudflare Worker configuration
+├── frontend/                 ← Vercel Frontend (Static HTML/JS)
+│   └── index.html            ← Main user interface
 └── README.md
 ```
 
 ---
 
-## Local development
+## Deployment Guide
 
-### 1. Install dependencies
-```bash
-npm install
-```
+### 1. Backend (Cloudflare Workers + Turso)
 
-### 2. Create a `.env` file
-```env
-PORT=3000
-JWT_SECRET=your-super-secret-key-change-this
-DB_DIR=./data
-```
+Your backend runs on the Edge using Cloudflare Workers and connects to a Turso database.
 
-### 3. Start the dev server
-```bash
-npm run dev
-```
+**Prerequisites:**
+- Node.js installed locally
+- A Turso Database URL and Auth Token
+- A Cloudflare account
 
-Open http://localhost:3000
+**Steps:**
+1. Open your terminal and navigate to the backend directory:
+   ```bash
+   cd backend
+   npm install
+   ```
+2. Add your secrets to Cloudflare securely:
+   ```bash
+   npx wrangler secret put TURSO_URL
+   npx wrangler secret put TURSO_TOKEN
+   npx wrangler secret put JWT_SECRET
+   ```
+   *(Paste the values when prompted by Wrangler).*
+3. Deploy the worker:
+   ```bash
+   npx wrangler deploy
+   ```
+4. Copy the deployed Cloudflare Worker URL provided in the terminal output.
 
----
+### 2. Frontend (Vercel)
 
-## Deploy to Render 
+The frontend is a lightweight, blazing-fast single-page application.
 
-### Step 1 — Push to GitHub
-```bash
-git init
-git add .
-git commit -m "Initial commit"
-git remote add origin https://github.com/YOUR_USERNAME/paisa-backend.git
-git push -u origin main
-```
+**Steps:**
+1. Open your terminal and navigate to the frontend directory:
+   ```bash
+   cd frontend
+   ```
+2. Deploy using the Vercel CLI:
+   ```bash
+   npx vercel
+   ```
+3. Follow the prompts to link and deploy your project.
 
-### Step 2 — Create a Render account
-Go to https://render.com and sign up (free).
-
-### Step 3 — New Web Service
-1. Click **New → Web Service**
-2. Connect your GitHub repo
-3. Render will auto-detect `render.yaml` — it sets everything up automatically:
-   - Build: `npm install`
-   - Start: `npm start`
-   - Disk: `/var/data` (persistent SQLite storage)
-   - `JWT_SECRET` auto-generated
-
-### Step 4 — Deploy
-Click **Create Web Service**. Render builds and deploys in ~2 minutes.
-
-Your app URL will be: `https://paisa-backend.onrender.com`
-
-> ⚠️ Free tier spins down after 15 mins of inactivity. First request after sleep takes ~30 seconds.
-
----
-
-## Using the frontend
-
-The `public/index.html` file is served by the backend itself.
-
-- **Option A**: Open `https://your-app.onrender.com` directly in any browser — it serves the frontend automatically.
-- **Option B**: Open the standalone `public/index.html` file locally. Enter your Render URL in the "Backend URL" field at the top of the login screen.
+### 3. Connect Frontend to Backend
+Once your frontend is deployed, visit the Vercel URL in your browser. On the login screen, enter your deployed Cloudflare Worker URL into the **Backend Syncer URL** input box. The frontend will immediately connect to your new backend and database!
 
 ---
 
@@ -112,14 +94,3 @@ All routes except `/api/auth/*` require `Authorization: Bearer <token>` header.
 | GET | `/api/settings` | Get bank balance |
 | PUT | `/api/settings` | Update bank balance |
 | GET | `/api/health` | Health check |
-
----
-
-## Environment variables
-
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `PORT` | Server port | `3000` |
-| `JWT_SECRET` | Secret for signing JWTs | ⚠️ **Must set in production** |
-| `DB_DIR` | Directory for SQLite file | `./data` |
-| `FRONTEND_URL` | CORS allowed origin | `*` |
