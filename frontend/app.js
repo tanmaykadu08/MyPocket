@@ -653,7 +653,6 @@
         // If testing locally or via file, we let the user manually configure the backend URL
         document.getElementById('apiUrlInput').value = API_URL;
         checkApiHealth();
-      }
 
       // Auto-login
       if (token && currentUser) {
