@@ -127,26 +127,80 @@
 
     // ── Month setup ──
     function initMonthSelect() {
-      const selects = [document.getElementById('monthSelect'), document.getElementById('monthSelectMobile')];
+      const hiddenSelect = document.getElementById('monthSelect');
+      const mobileSelect = document.getElementById('monthSelectMobile');
+      const pickerList = document.getElementById('monthPickerList');
       const now = new Date();
-      selects.forEach(sel => { if (sel) sel.innerHTML = ''; });
+
+      // Clear
+      if (hiddenSelect) hiddenSelect.innerHTML = '';
+      if (mobileSelect) mobileSelect.innerHTML = '';
+      if (pickerList) pickerList.innerHTML = '';
 
       for (let i = 0; i < 12; i++) {
         const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
         const key = getLocalMonthKey(d);
+        const label = d.toLocaleString('en-IN', { month: 'long', year: 'numeric' });
+        const shortLabel = d.toLocaleString('en-IN', { month: 'short', year: 'numeric' });
 
-        selects.forEach(sel => {
+        // Hidden select option
+        [hiddenSelect, mobileSelect].forEach(sel => {
           if (!sel) return;
           const opt = document.createElement('option');
           opt.value = key;
-          opt.textContent = d.toLocaleString('en-IN', { month: 'long', year: 'numeric' });
+          opt.textContent = label;
           sel.appendChild(opt);
         });
+
+        // Visual button for picker list
+        if (pickerList) {
+          const btn = document.createElement('button');
+          btn.dataset.key = key;
+          btn.className = 'month-picker-btn';
+          btn.innerHTML = `<span style="font-size:13px;font-weight:700;color:var(--text);font-family:var(--font-body);">${shortLabel}</span>`;
+          btn.style.cssText = 'padding:12px 14px;border-radius:14px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;text-align:left;transition:all .15s;width:100%;';
+          btn.onmouseover = () => { btn.style.background = 'var(--accent-blue)'; btn.querySelector('span').style.color = '#fff'; };
+          btn.onmouseout = () => {
+            const isActive = currentMonth === key;
+            btn.style.background = isActive ? 'var(--accent-blue)' : 'var(--surface2)';
+            btn.querySelector('span').style.color = isActive ? '#fff' : 'var(--text)';
+          };
+          btn.onclick = () => {
+            if (hiddenSelect) { hiddenSelect.value = key; onMonthChange(hiddenSelect); }
+            closeMonthPicker();
+          };
+          pickerList.appendChild(btn);
+        }
       }
+
       currentMonth = getLocalMonthKey(now);
-      selects.forEach(sel => { if (sel) sel.value = currentMonth; });
+      if (hiddenSelect) hiddenSelect.value = currentMonth;
+      if (mobileSelect) mobileSelect.value = currentMonth;
+      _updateMonthLabels(now.toLocaleString('en-IN', { month: 'long', year: 'numeric' }));
+      _highlightActivePicker();
       setDefaultDates();
     }
+
+    function _updateMonthLabels(text) {
+      const stickyLbl = document.getElementById('stickyMonthLabel');
+      if (stickyLbl) stickyLbl.textContent = text;
+      const lbl = document.getElementById('monthPickerLabel');
+      if (lbl) lbl.textContent = text;
+      // Show sticky bar
+      const stickyBar = document.getElementById('stickyMonthBar');
+      if (stickyBar) stickyBar.style.display = 'flex';
+    }
+
+    function _highlightActivePicker() {
+      document.querySelectorAll('.month-picker-btn').forEach(btn => {
+        const isActive = btn.dataset.key === currentMonth;
+        btn.style.background = isActive ? 'var(--accent-blue)' : 'var(--surface2)';
+        btn.style.borderColor = isActive ? 'var(--accent-blue)' : 'var(--border)';
+        const span = btn.querySelector('span');
+        if (span) span.style.color = isActive ? '#fff' : 'var(--text)';
+      });
+    }
+
 
     function setDefaultDates() {
       const [y, m] = currentMonth.split('-');
@@ -158,11 +212,15 @@
 
     function onMonthChange(selectEl) {
       currentMonth = selectEl.value;
-      // Sync the other selector based on mobile/desktop
       ['monthSelect', 'monthSelectMobile'].forEach(id => {
         const el = document.getElementById(id);
         if (el && el !== selectEl) el.value = currentMonth;
       });
+      // Sync labels
+      const sel = document.getElementById('monthSelect') || selectEl;
+      const selectedOpt = sel ? sel.options[sel.selectedIndex] : null;
+      if (selectedOpt) _updateMonthLabels(selectedOpt.textContent);
+      _highlightActivePicker();
       setDefaultDates();
       loadMonthData();
     }
@@ -711,39 +769,129 @@
       }
     });
 
-  // ── Sidebar Toggle ──
+  // ── Sidebar Toggle & Hover-to-Expand ──
   let sidebarCollapsed = false;
+  let sidebarHoverExpanded = false;
+
   function toggleSidebar() {
     sidebarCollapsed = !sidebarCollapsed;
+    _applySidebarState(sidebarCollapsed);
+    const icon = document.getElementById('sidebar-toggle-icon');
+    if (icon) icon.textContent = sidebarCollapsed ? 'keyboard_double_arrow_right' : 'keyboard_double_arrow_left';
+    const txt = document.getElementById('sidebar-toggle-text');
+    if (txt) txt.textContent = sidebarCollapsed ? 'Expand' : 'Collapse';
+  }
+
+  function onSidebarHover(entering) {
+    if (!sidebarCollapsed) return; // only act when collapsed
+    sidebarHoverExpanded = entering;
+    _applySidebarState(!entering); // expand on hover, collapse on leave
+  }
+
+  function _applySidebarState(collapsed) {
     const sidebar = document.getElementById('mainSidebar');
     const mainContent = document.getElementById('mainContent');
-    const toggleIcon = document.getElementById('sidebar-toggle-icon');
-    const toggleText = document.getElementById('sidebar-toggle-text');
     const texts = document.querySelectorAll('.sidebar-text');
-    
-    if (sidebarCollapsed) {
-      sidebar.classList.remove('w-64', 'p-6');
-      sidebar.classList.add('w-20', 'p-4', 'items-center');
-      mainContent.classList.remove('md:ml-64');
-      mainContent.classList.add('md:ml-20');
-      texts.forEach(t => t.classList.add('hidden'));
-      toggleIcon.textContent = 'keyboard_double_arrow_right';
-      // Hide title
-      const title = sidebar.querySelector('h1');
-      const subtitle = sidebar.querySelector('p');
-      if(title) title.classList.add('hidden');
-      if(subtitle) subtitle.classList.add('hidden');
+    const logo = document.getElementById('sidebar-logo');
+    const stickyBar = document.getElementById('stickyMonthBar');
+    if (!sidebar) return;
+
+    if (collapsed) {
+      sidebar.style.width = '68px';
+      sidebar.style.padding = '20px 10px';
+      mainContent && mainContent.style.setProperty('margin-left', '68px');
+      if (stickyBar) stickyBar.style.left = '68px';
+      texts.forEach(t => { t.style.opacity = '0'; t.style.pointerEvents = 'none'; });
+      if (logo) { logo.style.opacity = '0'; logo.style.height = '0'; logo.style.marginBottom = '0'; logo.style.overflow = 'hidden'; }
     } else {
-      sidebar.classList.remove('w-20', 'p-4', 'items-center');
-      sidebar.classList.add('w-64', 'p-6');
-      mainContent.classList.remove('md:ml-20');
-      mainContent.classList.add('md:ml-64');
-      texts.forEach(t => t.classList.remove('hidden'));
-      toggleIcon.textContent = 'keyboard_double_arrow_left';
-      // Show title
-      const title = sidebar.querySelector('h1');
-      const subtitle = sidebar.querySelector('p');
-      if(title) title.classList.remove('hidden');
-      if(subtitle) subtitle.classList.remove('hidden');
+      sidebar.style.width = '260px';
+      sidebar.style.padding = '28px 20px';
+      mainContent && mainContent.style.setProperty('margin-left', '260px');
+      if (stickyBar) stickyBar.style.left = '260px';
+      texts.forEach(t => { t.style.opacity = '1'; t.style.pointerEvents = ''; });
+      if (logo) { logo.style.opacity = '1'; logo.style.height = ''; logo.style.marginBottom = '32px'; logo.style.overflow = ''; }
+    }
+  }
+
+  // ── Modal Open/Close ──
+  function openModal(type) {
+    const modal = document.getElementById('transactionModal');
+    const content = document.getElementById('modalContent');
+    const title = document.getElementById('modalTitle');
+    const incForm = document.getElementById('modal-income-form');
+    const expForm = document.getElementById('modal-expense-form');
+    if (!modal) return;
+
+    modal.style.display = 'flex';
+    setTimeout(() => { content.style.transform = 'scale(1)'; }, 10);
+
+    if (type === 'income') {
+      title.textContent = 'Add Income';
+      incForm.style.display = 'block';
+      expForm.style.display = 'none';
+      const d = document.getElementById('inc-date');
+      if (d && !d.value) d.value = new Date().toISOString().split('T')[0];
+    } else {
+      title.textContent = 'Add Expense';
+      incForm.style.display = 'none';
+      expForm.style.display = 'block';
+      const d = document.getElementById('exp-date');
+      if (d && !d.value) d.value = new Date().toISOString().split('T')[0];
+    }
+  }
+
+  function closeModal() {
+    const modal = document.getElementById('transactionModal');
+    const content = document.getElementById('modalContent');
+    if (!modal) return;
+    content.style.transform = 'scale(0.95)';
+    setTimeout(() => { modal.style.display = 'none'; }, 220);
+  }
+
+  // ── Profile Dropdown ──
+  function toggleProfileMenu() {
+    const dd = document.getElementById('profileDropdown');
+    if (!dd) return;
+    const isHidden = dd.classList.contains('hidden');
+    dd.classList.toggle('hidden', !isHidden);
+    // update name in dropdown
+    const u = document.getElementById('sidebarUser');
+    const pdu = document.getElementById('profileDropdownUser');
+    if (u && pdu) pdu.textContent = u.textContent;
+  }
+
+  // Close profile dropdown when clicking outside
+  document.addEventListener('click', (e) => {
+    const wrap = document.getElementById('profileDropdownWrap');
+    if (wrap && !wrap.contains(e.target)) {
+      const dd = document.getElementById('profileDropdown');
+      if (dd) dd.classList.add('hidden');
+    }
+  });
+
+  // openMonthPicker defined below with highlight logic
+
+  function closeMonthPicker() {
+    const modal = document.getElementById('monthPickerModal');
+    if (modal) modal.style.display = 'none';
+  }
+
+  function openMonthPicker() {
+    _highlightActivePicker();
+    const modal = document.getElementById('monthPickerModal');
+    if (modal) modal.style.display = 'flex';
+    // close profile dropdown if open
+    const dd = document.getElementById('profileDropdown');
+    if (dd) dd.classList.add('hidden');
+  }
+
+  // ── Change Account Modal ──
+  function openChangeAccountModal() {
+    const dd = document.getElementById('profileDropdown');
+    if (dd) dd.classList.add('hidden');
+    // Simple prompt for now — could be expanded to a full account switcher
+    const newName = prompt('Enter account name or email to switch accounts:\n(Feature coming soon — currently shows a name update preview)', currentUser?.name || '');
+    if (newName && newName.trim()) {
+      alert(`Account display updated to: ${newName.trim()}\n\nFull multi-account support is coming soon!`);
     }
   }
