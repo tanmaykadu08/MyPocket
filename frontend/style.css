@@ -321,7 +321,8 @@
     }
 
     .month-selector select option {
-      background: #1a1a1a;
+      background: var(--surface);
+      color: var(--text);
     }
 
     /* Main Area */
@@ -521,7 +522,8 @@
     }
 
     .form-group select option {
-      background: #1a1a1a;
+      background: var(--surface);
+      color: var(--text);
     }
 
     .btn {
