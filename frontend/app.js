@@ -197,13 +197,49 @@
       // Show section
       document.getElementById('sec-' + section).classList.add('active');
 
-      // Tag proper menu buttons active
-      const targetFn = `navigate('${section}')`;
-      document.querySelectorAll(`.nav-btn[onclick="${targetFn}"], .mobile-nav-btn[onclick="${targetFn}"]`)
-        .forEach(b => b.classList.add('active'));
+    // ── Tag proper menu buttons active ──
+    const targetFn = `navigate('${section}')`;
+    document.querySelectorAll(`.nav-btn[onclick="${targetFn}"], .mobile-nav-btn[onclick="${targetFn}"]`)
+      .forEach(b => b.classList.add('active'));
+  }
+
+  // ── Modals ──
+  function openModal(type) {
+    const modal = document.getElementById('transactionModal');
+    const content = document.getElementById('modalContent');
+    const title = document.getElementById('modalTitle');
+    const incForm = document.getElementById('modal-income-form');
+    const expForm = document.getElementById('modal-expense-form');
+
+    if (type === 'income') {
+      title.textContent = 'Add Income';
+      incForm.classList.remove('hidden');
+      expForm.classList.add('hidden');
+    } else {
+      title.textContent = 'Add Expense';
+      expForm.classList.remove('hidden');
+      incForm.classList.add('hidden');
     }
 
-    // ── Actions (RESTORED API LOGIC) ──
+    modal.classList.remove('hidden');
+    // slight delay for transition
+    setTimeout(() => {
+      modal.classList.remove('opacity-0');
+      content.classList.remove('scale-95');
+    }, 10);
+  }
+
+  function closeModal() {
+    const modal = document.getElementById('transactionModal');
+    const content = document.getElementById('modalContent');
+    modal.classList.add('opacity-0');
+    content.classList.add('scale-95');
+    setTimeout(() => {
+      modal.classList.add('hidden');
+    }, 300);
+  }
+
+  // ── Actions (RESTORED API LOGIC) ──
     async function addIncome() {
       const label = document.getElementById('inc-label').value.trim();
       const amount = parseFloat(document.getElementById('inc-amount').value);
@@ -227,6 +263,7 @@
         document.getElementById('inc-amount').value = '';
         document.getElementById('inc-notes').value = '';
         renderAll();
+        closeModal();
       } catch (e) { alert(e.message); }
       finally { btn.disabled = false; }
     }
@@ -270,6 +307,7 @@
         if(autoOpt) autoOpt.textContent = '✨ Auto Classify';
 
         renderAll();
+        closeModal();
       } catch (e) { alert(e.message); }
       finally { btn.disabled = false; }
     }

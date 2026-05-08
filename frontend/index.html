@@ -245,11 +245,11 @@
           <span>Goals</span>
         </button>
         <!-- User asked to stub out Budget -->
-        <button class="w-full flex items-center gap-3 text-slate-500 dark:text-slate-400 px-4 py-3 hover:bg-slate-200/50 dark:hover:bg-slate-800 transition-colors rounded-xl font-semibold" onclick="alert('Budget module coming soon!')" id="nav-budget">
+        <button class="w-full flex items-center gap-3 text-slate-500 dark:text-slate-400 px-4 py-3 hover:bg-slate-200/50 dark:hover:bg-slate-800 transition-colors rounded-xl font-semibold" onclick="openModal('expense')" id="nav-expenses">
           <span class="material-symbols-outlined" data-icon="account_balance_wallet">account_balance_wallet</span>
-          <span>Budget</span>
+          <span>Expenses</span>
         </button>
-        <button class="w-full flex items-center gap-3 text-slate-500 dark:text-slate-400 px-4 py-3 hover:bg-slate-200/50 dark:hover:bg-slate-800 transition-colors rounded-xl font-semibold" onclick="navigate('income')" id="nav-income">
+        <button class="w-full flex items-center gap-3 text-slate-500 dark:text-slate-400 px-4 py-3 hover:bg-slate-200/50 dark:hover:bg-slate-800 transition-colors rounded-xl font-semibold" onclick="openModal('income')" id="nav-income">
           <span class="material-symbols-outlined" data-icon="savings">savings</span>
           <span>Income</span>
         </button>
@@ -259,9 +259,9 @@
         </button>
       </nav>
       <div class="mt-auto pt-6 space-y-2">
-         <div class="month-selector w-full mb-4 text-slate-800">
+         <div class="month-selector w-full mb-4 text-slate-800 dark:text-slate-200">
           <label class="text-slate-500 font-bold" style="font-size: 11px; text-transform: uppercase;">Viewing month</label>
-          <select id="monthSelect" onchange="onMonthChange(this)" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 mt-1 font-bold text-slate-800 outline-none focus:ring-2 focus:ring-primary cursor-pointer transition-all"></select>
+          <select id="monthSelect" onchange="onMonthChange(this)" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-2.5 mt-1 font-bold text-slate-800 dark:text-slate-200 outline-none focus:ring-2 focus:ring-primary cursor-pointer transition-all"></select>
         </div>
         <button class="w-full flex items-center gap-3 text-slate-500 dark:text-slate-400 px-4 py-3 hover:bg-slate-200/50 transition-colors rounded-xl" onclick="doLogout()">
           <span class="material-symbols-outlined" data-icon="logout">logout</span>
@@ -273,8 +273,8 @@
     <!-- Mobile Nav Override (Hidden on desktop) -->
     <div class="md:hidden fixed bottom-0 left-0 right-0 bg-slate-50 dark:bg-slate-900 border-t border-outline-variant/10 p-3 flex justify-around z-50">
         <button class="p-2 text-primary" onclick="navigate('dashboard')"><span class="material-symbols-outlined">dashboard</span></button>
-        <button class="p-2 text-slate-500" onclick="navigate('income')"><span class="material-symbols-outlined">savings</span></button>
-        <button class="p-2 text-slate-500" onclick="navigate('expenses')"><span class="material-symbols-outlined">account_balance_wallet</span></button>
+        <button class="p-2 text-slate-500" onclick="openModal('income')"><span class="material-symbols-outlined">savings</span></button>
+        <button class="p-2 text-slate-500" onclick="openModal('expense')"><span class="material-symbols-outlined">account_balance_wallet</span></button>
         <button class="p-2 text-slate-500" onclick="navigate('savings')"><span class="material-symbols-outlined">track_changes</span></button>
         <button class="p-2 text-slate-500" onclick="navigate('report')"><span class="material-symbols-outlined">receipt_long</span></button>
     </div>
@@ -287,8 +287,8 @@
            <div class="md:hidden mr-4 text-xl font-bold font-headline text-slate-900 dark:text-white">MyPocket</div>
         </div>
         <div class="flex items-center gap-4 md:gap-6 ml-auto">
-          <div class="month-selector md:hidden text-slate-800">
-            <select id="monthSelectMobile" onchange="onMonthChange(this)" class="bg-slate-50 border border-slate-200 rounded-lg p-1.5 font-bold text-slate-800 outline-none focus:ring-2 focus:ring-primary transition-all" style="font-size: 13px;"></select>
+          <div class="month-selector md:hidden text-slate-800 dark:text-slate-200">
+            <select id="monthSelectMobile" onchange="onMonthChange(this)" class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-1.5 font-bold text-slate-800 dark:text-slate-200 outline-none focus:ring-2 focus:ring-primary transition-all" style="font-size: 13px;"></select>
           </div>
           <div class="flex items-center gap-3 border-l pl-4 md:pl-6 border-outline-variant/30">
             <div class="text-right hidden sm:block">
@@ -318,10 +318,10 @@
               </h2>
             </div>
             <div class="flex gap-3 hidden sm:flex">
-                <button class="px-6 py-3 gradient-brand text-white rounded-xl font-bold text-sm shadow-lg shadow-primary/20 flex items-center gap-2 transition-all" onclick="navigate('income')">
+                <button class="px-6 py-3 gradient-brand text-white rounded-xl font-bold text-sm shadow-lg shadow-primary/20 flex items-center gap-2 transition-all hover:scale-105 active:scale-95" onclick="openModal('income')">
                   <span class="material-symbols-outlined text-sm" data-icon="add">add</span> Add Income
                 </button>
-                <button class="px-6 py-3 bg-red-500 hover:bg-red-600 text-white rounded-xl font-bold text-sm shadow-lg shadow-red-500/20 flex items-center gap-2 transition-all" onclick="navigate('expenses')">
+                <button class="px-6 py-3 bg-red-500 hover:bg-red-600 text-white rounded-xl font-bold text-sm shadow-lg shadow-red-500/20 flex items-center gap-2 transition-all hover:scale-105 active:scale-95" onclick="openModal('expense')">
                   <span class="material-symbols-outlined text-sm" data-icon="remove">remove</span> Add Expense
                 </button>
             </div>
@@ -427,15 +427,7 @@
           <h1>Income</h1>
           <p>Record your monthly earnings</p>
         </div>
-        <div class="form-card">
-          <div class="form-title">Add income source</div>
-          <div class="form-row three">
-            <div class="form-group"><label>Source / label</label><input id="inc-label"
-                placeholder="e.g. Salary, Freelance" /></div>
-            <div class="form-group"><label>Amount (₹)</label><input id="inc-amount" type="number" placeholder="0" />
-            </div>
-            <div class="form-group"><label>Date received</label><input id="inc-date" type="date" /></div>
-          </div>
+        <div class="flex justify-between items-center mb-4"><p class="text-sm text-slate-500">Your logged income sources</p><button class="btn btn-primary shadow-lg hover:scale-105 active:scale-95 transition-all" onclick="openModal('income')">+ Add Income</button></div>
           <div class="form-row">
             <div class="form-group"><label>Notes (optional)</label><input id="inc-notes" placeholder="Optional note" />
             </div>
@@ -472,15 +464,7 @@
           <h1>Expenses</h1>
           <p>Track every rupee spent securely</p>
         </div>
-        <div class="form-card">
-          <div class="form-title">Add expense</div>
-          <div class="form-row three">
-            <div class="form-group"><label>Description</label><input id="exp-desc" placeholder="e.g. Grocery, Zomato" />
-            </div>
-            <div class="form-group"><label>Amount (₹)</label><input id="exp-amount" type="number" placeholder="0" />
-            </div>
-            <div class="form-group"><label>Date</label><input id="exp-date" type="date" /></div>
-          </div>
+        <div class="flex justify-between items-center mb-4"><p class="text-sm text-slate-500">Your logged expenses</p><button class="btn btn-primary shadow-lg bg-red-500 hover:bg-red-600 hover:scale-105 active:scale-95 transition-all" onclick="openModal('expense')">+ Add Expense</button></div>
           <div class="form-row three">
             <div class="form-group"><label>Category</label>
               <select id="exp-cat">
@@ -691,6 +675,54 @@
   </div>
 
   <script src="app.js"></script>
+
+  <!-- Transaction Modal -->
+  <div id="transactionModal" class="fixed inset-0 z-[100] flex items-center justify-center hidden opacity-0 transition-opacity duration-300">
+    <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="closeModal()"></div>
+    <div class="bg-surface-container-lowest dark:bg-slate-800 rounded-[2rem] shadow-2xl p-6 md:p-8 z-10 w-[90%] max-w-xl transform scale-95 transition-transform duration-300" id="modalContent">
+      <div class="flex justify-between items-center mb-6 border-b border-outline-variant/10 pb-4">
+        <h3 class="text-2xl font-headline font-bold text-on-surface dark:text-white" id="modalTitle">Add Transaction</h3>
+        <button class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 bg-slate-100 dark:bg-slate-700 p-2 rounded-full transition-colors" onclick="closeModal()">
+          <span class="material-symbols-outlined text-sm">close</span>
+        </button>
+      </div>
+
+      <div id="modal-income-form" class="hidden">
+        <div class="modal-form-wrap">
+          <div class="form-title">Add income source</div>
+          <div class="form-row three">
+            <div class="form-group"><label>Source / label</label><input id="inc-label"
+                placeholder="e.g. Salary, Freelance" /></div>
+            <div class="form-group"><label>Amount (₹)</label><input id="inc-amount" type="number" placeholder="0" />
+            </div>
+            <div class="form-group"><label>Date received</label><input id="inc-date" type="date" /></div>
+          </div>
+      </div>
+      
+      <div id="modal-expense-form" class="hidden">
+        <div class="modal-form-wrap">
+          <div class="form-title">Add expense</div>
+          <div class="form-row three">
+            <div class="form-group"><label>Description</label><input id="exp-desc" placeholder="e.g. Grocery, Zomato" />
+            </div>
+            <div class="form-group"><label>Amount (₹)</label><input id="exp-amount" type="number" placeholder="0" />
+            </div>
+            <div class="form-group"><label>Date</label><input id="exp-date" type="date" /></div>
+          </div>
+      </div>
+    </div>
+  </div>
+
+    <!-- Mobile FAB -->
+    <div class="md:hidden fixed bottom-20 right-6 z-50 flex flex-col gap-3 items-end">
+        <button class="w-14 h-14 bg-red-500 text-white rounded-full shadow-[0_8px_30px_rgb(239,68,68,0.4)] flex items-center justify-center hover:scale-105 active:scale-95 transition-all" onclick="openModal('expense')">
+            <span class="material-symbols-outlined text-2xl">remove</span>
+        </button>
+        <button class="w-14 h-14 gradient-brand text-white rounded-full shadow-[0_8px_30px_rgb(0,88,190,0.4)] flex items-center justify-center hover:scale-105 active:scale-95 transition-all" onclick="openModal('income')">
+            <span class="material-symbols-outlined text-2xl">add</span>
+        </button>
+    </div>
+
 </body>
 
 </html>
