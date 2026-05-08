@@ -12,8 +12,8 @@ export async function authMiddleware(c, next) {
     c.set('userId', payload.userId);
     c.set('userEmail', payload.email);
     await next();
-  } catch {
-    return c.json({ error: 'Invalid or expired token' }, 401);
+  } catch (err) {
+    return c.json({ error: 'Token verification failed: ' + err.message }, 401);
   }
 }
 
