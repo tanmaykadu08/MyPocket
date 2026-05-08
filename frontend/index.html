@@ -12,7 +12,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
   <script id="tailwind-config">
         tailwind.config = {
-            darkMode: "class",
+            darkMode: "media",
             theme: {
                 extend: {
                     "colors": {
@@ -225,7 +225,7 @@
   <div class="app-shell bg-surface text-on-surface" id="appShell">
 
     <!-- Tailwind Shell Sidebar -->
-    <aside class="tailwind-sidebar hidden md:flex fixed left-0 top-0 h-full flex-col p-6 bg-slate-50 dark:bg-slate-900 w-64 border-r border-outline-variant/10 font-['Manrope'] text-sm tracking-tight z-50">
+    <aside id="mainSidebar" class="tailwind-sidebar hidden md:flex fixed left-0 top-0 h-full flex-col p-6 bg-slate-50 dark:bg-slate-900 w-64 border-r border-outline-variant/10 font-['Manrope'] text-sm tracking-tight z-50 transition-all duration-300">
       <div class="mb-10">
         <h1 class="text-xl font-bold tracking-tighter text-slate-900 dark:text-white">MyPocket</h1>
         <p class="text-[10px] uppercase tracking-widest text-slate-400 font-semibold mt-1">Money Manager</p>
@@ -233,29 +233,29 @@
       <nav class="flex-1 space-y-2">
         <button class="w-full flex items-center gap-3 text-slate-500 dark:text-slate-400 px-4 py-3 hover:bg-slate-200/50 dark:hover:bg-slate-800 transition-colors rounded-xl font-semibold" onclick="navigate('dashboard')" id="nav-dashboard">
           <span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
-          <span>Dashboard</span>
+          <span class="sidebar-text">Dashboard</span>
         </button>
         <button class="w-full flex items-center gap-3 text-slate-500 dark:text-slate-400 px-4 py-3 hover:bg-slate-200/50 dark:hover:bg-slate-800 transition-colors rounded-xl font-semibold" onclick="navigate('report')" id="nav-report">
           <span class="material-symbols-outlined" data-icon="receipt_long">receipt_long</span>
-          <span>Transactions</span>
+          <span class="sidebar-text">Transactions</span>
         </button>
         <!-- User asked to link Goals to Savings -->
         <button class="w-full flex items-center gap-3 text-slate-500 dark:text-slate-400 px-4 py-3 hover:bg-slate-200/50 dark:hover:bg-slate-800 transition-colors rounded-xl font-semibold" onclick="navigate('savings')" id="nav-goals">
           <span class="material-symbols-outlined" data-icon="track_changes">track_changes</span>
-          <span>Goals</span>
+          <span class="sidebar-text">Goals</span>
         </button>
         <!-- User asked to stub out Budget -->
-        <button class="w-full flex items-center gap-3 text-slate-500 dark:text-slate-400 px-4 py-3 hover:bg-slate-200/50 dark:hover:bg-slate-800 transition-colors rounded-xl font-semibold" onclick="openModal('expense')" id="nav-expenses">
+        <button class="w-full flex items-center gap-3 text-slate-500 dark:text-slate-400 px-4 py-3 hover:bg-slate-200/50 dark:hover:bg-slate-800 transition-colors rounded-xl font-semibold" onclick="navigate('expenses')" id="nav-expenses">
           <span class="material-symbols-outlined" data-icon="account_balance_wallet">account_balance_wallet</span>
-          <span>Expenses</span>
+          <span class="sidebar-text">Expenses</span>
         </button>
-        <button class="w-full flex items-center gap-3 text-slate-500 dark:text-slate-400 px-4 py-3 hover:bg-slate-200/50 dark:hover:bg-slate-800 transition-colors rounded-xl font-semibold" onclick="openModal('income')" id="nav-income">
+        <button class="w-full flex items-center gap-3 text-slate-500 dark:text-slate-400 px-4 py-3 hover:bg-slate-200/50 dark:hover:bg-slate-800 transition-colors rounded-xl font-semibold" onclick="navigate('income')" id="nav-income">
           <span class="material-symbols-outlined" data-icon="savings">savings</span>
-          <span>Income</span>
+          <span class="sidebar-text">Income</span>
         </button>
          <button class="w-full flex items-center gap-3 text-slate-500 dark:text-slate-400 px-4 py-3 hover:bg-slate-200/50 dark:hover:bg-slate-800 transition-colors rounded-xl font-semibold" onclick="navigate('autopay')" id="nav-autopay">
           <span class="material-symbols-outlined" data-icon="currency_exchange">currency_exchange</span>
-          <span>Auto Payments</span>
+          <span class="sidebar-text">Auto Payments</span>
         </button>
       </nav>
       <div class="mt-auto pt-6 space-y-2">
@@ -263,10 +263,16 @@
           <label class="text-slate-500 font-bold" style="font-size: 11px; text-transform: uppercase;">Viewing month</label>
           <select id="monthSelect" onchange="onMonthChange(this)" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-2.5 mt-1 font-bold text-slate-800 dark:text-slate-200 outline-none focus:ring-2 focus:ring-primary cursor-pointer transition-all"></select>
         </div>
+        
         <button class="w-full flex items-center gap-3 text-slate-500 dark:text-slate-400 px-4 py-3 hover:bg-slate-200/50 transition-colors rounded-xl" onclick="doLogout()">
           <span class="material-symbols-outlined" data-icon="logout">logout</span>
-          <span>Log Out</span>
+          <span class="sidebar-text">Log Out</span>
         </button>
+        <button class="w-full flex items-center gap-3 text-slate-500 dark:text-slate-400 px-4 py-3 hover:bg-slate-200/50 transition-colors rounded-xl mt-2" onclick="toggleSidebar()">
+          <span class="material-symbols-outlined" id="sidebar-toggle-icon">keyboard_double_arrow_left</span>
+          <span class="sidebar-text" id="sidebar-toggle-text">Collapse</span>
+        </button>
+
       </div>
     </aside>
 
@@ -280,7 +286,7 @@
     </div>
 
     <!-- Main Content Shell -->
-    <div class="md:ml-64 w-full flex flex-col items-stretch">
+    <div id="mainContent" class="md:ml-64 w-full flex flex-col items-stretch transition-all duration-300">
       <!-- TopNavBar Shell -->
       <header class="flex justify-between items-center h-20 px-4 md:px-8 w-full sticky top-0 z-40 bg-surface/80 backdrop-blur-md border-b border-outline-variant/10 shadow-sm font-['Manrope'] font-medium text-slate-800">
         <div class="flex items-center flex-1 max-w-xl">
