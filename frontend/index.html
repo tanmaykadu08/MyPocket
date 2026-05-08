@@ -259,9 +259,9 @@
         </button>
       </nav>
       <div class="mt-auto pt-6 space-y-2">
-         <div class="month-selector w-full mb-4 text-on-surface">
-          <label class="text-slate-500 font-bold" style="font-size: 11px; text-transform: uppercase;">Viewing month</label>
-          <select id="monthSelect" onchange="onMonthChange(this)" class="w-full bg-transparent border border-outline-variant/30 rounded-lg p-2.5 mt-1 font-bold text-on-surface outline-none focus:ring-2 focus:ring-primary cursor-pointer transition-all"></select>
+         <div class="month-selector w-full mb-4" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:12px 14px;">
+          <label style="font-size: 11px; text-transform: uppercase; letter-spacing:.08em; color:rgba(255,255,255,0.5); font-weight:700; display:block; margin-bottom:6px;">Viewing month</label>
+          <select id="monthSelect" onchange="onMonthChange(this)" class="w-full bg-transparent border-none rounded-lg font-bold outline-none cursor-pointer transition-all" style="color:#fff;padding:0;"></select>
         </div>
         
         <button class="w-full flex items-center gap-3 text-slate-500 dark:text-slate-400 px-4 py-3 hover:bg-slate-200/50 transition-colors rounded-xl" onclick="doLogout()">
@@ -656,7 +656,7 @@
   <!-- Transaction Modal -->
   <div id="transactionModal" class="fixed inset-0 z-[100] flex items-center justify-center hidden opacity-0 transition-opacity duration-300">
     <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="closeModal()"></div>
-    <div class="form-card z-10 w-[90%] max-w-xl transform scale-95 transition-transform duration-300 !m-0 p-6 md:p-8 flex flex-col" id="modalContent">
+    <div class="form-card z-10 w-[95%] max-w-2xl transform scale-95 transition-transform duration-300 !m-0 p-8 md:p-10 flex flex-col" id="modalContent">
       <div class="flex justify-between items-center mb-6 border-b border-outline-variant/10 pb-4">
         <h3 class="text-2xl font-headline font-bold text-on-surface" id="modalTitle">Add Transaction</h3>
         <button class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 bg-slate-100 dark:bg-slate-800 p-2 rounded-full transition-colors" onclick="closeModal()">
@@ -708,20 +708,6 @@
             <button class="btn btn-primary w-full" id="exp-btn" onclick="addExpense()">+ Add expense</button>
           </div>
         </div>
-      </div>
-    </div>
-  </div>
-      
-      <div id="modal-expense-form" class="hidden">
-        <div class="modal-form-wrap">
-          <div class="form-title">Add expense</div>
-          <div class="form-row three">
-            <div class="form-group"><label>Description</label><input id="exp-desc" placeholder="e.g. Grocery, Zomato" />
-            </div>
-            <div class="form-group"><label>Amount (₹)</label><input id="exp-amount" type="number" placeholder="0" />
-            </div>
-            <div class="form-group"><label>Date</label><input id="exp-date" type="date" /></div>
-          </div>
       </div>
     </div>
   </div>
