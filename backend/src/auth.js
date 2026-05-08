@@ -8,7 +8,7 @@ export async function authMiddleware(c, next) {
   const token = header.slice(7);
   try {
     const secret = c.env.JWT_SECRET || 'change-this-secret-in-production';
-    const payload = await verify(token, secret);
+    const payload = await verify(token, secret, 'HS256');
     c.set('userId', payload.userId);
     c.set('userEmail', payload.email);
     await next();
@@ -23,5 +23,5 @@ export async function signToken(userId, email, secret) {
     email,
     exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 30, // 30 days
   };
-  return await sign(payload, secret);
+  return await sign(payload, secret, 'HS256');
 }
