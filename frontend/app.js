@@ -643,12 +643,13 @@
       const isFileMode = window.location.protocol === 'file:';
       const urlSection = document.getElementById('apiUrlSection');
       
-      // If we are on a real live domain we can still allow setting API URL or fallback to localStorage
-      if (!isLocalhost && !isFileMode && urlSection) {
-        // If you hardcode your Cloudflare Worker URL later, you can put it here:
-        // API_URL = 'https://mypocket-backend.your-username.workers.dev';
-        // For now, we'll leave the input visible or rely on localStorage so it can connect to Cloudflare.
-      } else if (API_URL && urlSection) {
+      // Auto-connect to the Cloudflare Backend
+      API_URL = 'https://mypocket.kadutanmay-06.workers.dev';
+      localStorage.setItem('mypocket_api_url', API_URL);
+      
+      if (urlSection) {
+        urlSection.style.display = 'none'; // Hide the box so the login screen looks clean!
+      }
         // If testing locally or via file, we let the user manually configure the backend URL
         document.getElementById('apiUrlInput').value = API_URL;
         checkApiHealth();
