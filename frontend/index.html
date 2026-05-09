@@ -258,6 +258,10 @@
           <span class="material-symbols-outlined" style="font-size:20px;flex-shrink:0;">currency_exchange</span>
           <span class="sidebar-text" style="white-space:nowrap;">Auto Payments</span>
         </button>
+        <button class="nav-btn w-full flex items-center gap-3 font-semibold" onclick="navigate('ai')" id="nav-ai" style="margin-top:8px;background:linear-gradient(135deg,rgba(168,85,247,0.12),rgba(59,130,246,0.12));border:1px solid rgba(168,85,247,0.2);">
+          <span class="material-symbols-outlined" style="font-size:20px;flex-shrink:0;color:#a855f7;">auto_awesome</span>
+          <span class="sidebar-text" style="white-space:nowrap;background:linear-gradient(135deg,#a855f7,#3b82f6);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;">AI Insights</span>
+        </button>
       </nav>
       <div style="margin-top:auto;padding-top:20px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:4px;">
         <button class="nav-btn w-full flex items-center gap-3" onclick="toggleSidebar()">
@@ -273,7 +277,7 @@
         <button class="p-2 text-slate-500" onclick="openModal('income')"><span class="material-symbols-outlined">savings</span></button>
         <button class="p-2 text-slate-500" onclick="openModal('expense')"><span class="material-symbols-outlined">account_balance_wallet</span></button>
         <button class="p-2 text-slate-500" onclick="navigate('savings')"><span class="material-symbols-outlined">track_changes</span></button>
-        <button class="p-2 text-slate-500" onclick="navigate('report')"><span class="material-symbols-outlined">receipt_long</span></button>
+        <button class="p-2 text-slate-500" onclick="navigate('ai')" style="color:#a855f7;"><span class="material-symbols-outlined">auto_awesome</span></button>
     </div>
 
     <!-- Main Content Shell -->
@@ -656,10 +660,144 @@
         </div>
       </div>
 
+      <!-- AI INSIGHTS HUB -->
+      <div class="section" id="sec-ai">
+        <div class="p-4 md:p-8 w-full max-w-7xl mx-auto">
+          <!-- Header -->
+          <div class="mb-8">
+            <div class="flex items-center gap-3 mb-2">
+              <div class="w-10 h-10 rounded-2xl flex items-center justify-center" style="background:linear-gradient(135deg,#a855f7,#3b82f6);">
+                <span class="material-symbols-outlined text-white" style="font-size:20px;">auto_awesome</span>
+              </div>
+              <div>
+                <h1 class="font-headline font-extrabold text-2xl text-slate-900 tracking-tight">AI Insights</h1>
+                <p class="text-xs text-slate-500 font-medium">Powered by on-device intelligence</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- AI Search Bar -->
+          <div class="mb-8">
+            <div class="relative">
+              <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                <span class="material-symbols-outlined text-slate-400" style="font-size:20px;">search</span>
+              </div>
+              <input id="ai-search-input" type="text" placeholder='Try: "food this month", "top expenses", "show transport"' 
+                class="w-full pl-12 pr-32 py-4 rounded-2xl border border-slate-200 bg-white shadow-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-400 transition-all"
+                style="font-size:15px;" oninput="onAISearchInput(this.value)" onkeydown="if(event.key==='Enter')runAISearch()" />
+              <button onclick="runAISearch()" class="absolute right-3 top-1/2 -translate-y-1/2 px-4 py-2 rounded-xl text-white text-sm font-bold transition-all hover:scale-105 active:scale-95"
+                style="background:linear-gradient(135deg,#a855f7,#3b82f6);">Search</button>
+            </div>
+            <div id="ai-search-results" class="mt-4"></div>
+          </div>
+
+          <!-- AI Cards Grid -->
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+            <!-- Monthly AI Overview -->
+            <div class="bg-white rounded-[2rem] border border-slate-100 shadow-sm p-7" style="grid-column: span 2;">
+              <div class="flex justify-between items-start mb-5">
+                <div>
+                  <h3 class="font-headline font-bold text-lg text-slate-900">Monthly AI Overview</h3>
+                  <p class="text-xs text-slate-500 mt-0.5">AI-generated narrative for the selected month</p>
+                </div>
+                <button onclick="generateAIOverview()" id="ai-overview-btn"
+                  class="flex items-center gap-2 px-4 py-2 rounded-xl text-white text-sm font-bold transition-all hover:scale-105 active:scale-95"
+                  style="background:linear-gradient(135deg,#a855f7,#3b82f6);">
+                  <span class="material-symbols-outlined" style="font-size:16px;">auto_awesome</span>
+                  Generate
+                </button>
+              </div>
+              <div id="ai-overview-content">
+                <div class="text-center py-10 text-slate-400">
+                  <span class="material-symbols-outlined text-5xl mb-3 block" style="color:#d1d5db;">psychology</span>
+                  <p class="text-sm font-medium">Click Generate to get your AI monthly overview</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- AI Budget Coach -->
+            <div class="bg-white rounded-[2rem] border border-slate-100 shadow-sm p-7">
+              <div class="flex items-center gap-3 mb-5">
+                <div class="w-9 h-9 rounded-xl flex items-center justify-center" style="background:linear-gradient(135deg,#10b981,#3b82f6);">
+                  <span class="material-symbols-outlined text-white" style="font-size:18px;">tips_and_updates</span>
+                </div>
+                <div>
+                  <h3 class="font-headline font-bold text-base text-slate-900">Budget Coach</h3>
+                  <p class="text-xs text-slate-500">Personalised savings advice</p>
+                </div>
+              </div>
+              <div id="ai-coach-content">
+                <div class="text-center py-8 text-slate-400">
+                  <span class="material-symbols-outlined text-4xl mb-2 block" style="color:#d1d5db;">pending</span>
+                  <p class="text-xs">Loading data...</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- AI Prediction -->
+            <div class="bg-white rounded-[2rem] border border-slate-100 shadow-sm p-7">
+              <div class="flex items-center gap-3 mb-5">
+                <div class="w-9 h-9 rounded-xl flex items-center justify-center" style="background:linear-gradient(135deg,#f59e0b,#ef4444);">
+                  <span class="material-symbols-outlined text-white" style="font-size:18px;">trending_up</span>
+                </div>
+                <div>
+                  <h3 class="font-headline font-bold text-base text-slate-900">Spending Forecast</h3>
+                  <p class="text-xs text-slate-500">Predicted end-of-month balance</p>
+                </div>
+              </div>
+              <div id="ai-prediction-content">
+                <div class="text-center py-8 text-slate-400">
+                  <span class="material-symbols-outlined text-4xl mb-2 block" style="color:#d1d5db;">pending</span>
+                  <p class="text-xs">Loading data...</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- AI Anomaly Alerts -->
+          <div class="bg-white rounded-[2rem] border border-slate-100 shadow-sm p-7 mb-6">
+            <div class="flex items-center gap-3 mb-5">
+              <div class="w-9 h-9 rounded-xl flex items-center justify-center" style="background:linear-gradient(135deg,#ef4444,#f59e0b);">
+                <span class="material-symbols-outlined text-white" style="font-size:18px;">warning</span>
+              </div>
+              <div>
+                <h3 class="font-headline font-bold text-base text-slate-900">Anomaly Detection</h3>
+                <p class="text-xs text-slate-500">Unusual patterns flagged by AI</p>
+              </div>
+            </div>
+            <div id="ai-anomaly-content">
+              <div class="text-center py-8 text-slate-400">
+                <span class="material-symbols-outlined text-4xl mb-2 block" style="color:#d1d5db;">pending</span>
+                <p class="text-xs">Loading data...</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- AI Category Intelligence -->
+          <div class="bg-white rounded-[2rem] border border-slate-100 shadow-sm p-7">
+            <div class="flex items-center gap-3 mb-5">
+              <div class="w-9 h-9 rounded-xl flex items-center justify-center" style="background:linear-gradient(135deg,#a855f7,#ec4899);">
+                <span class="material-symbols-outlined text-white" style="font-size:18px;">donut_small</span>
+              </div>
+              <div>
+                <h3 class="font-headline font-bold text-base text-slate-900">Spending DNA</h3>
+                <p class="text-xs text-slate-500">How your money flows — AI analysed</p>
+              </div>
+            </div>
+            <div id="ai-dna-content">
+              <div class="text-center py-8 text-slate-400">
+                <span class="material-symbols-outlined text-4xl mb-2 block" style="color:#d1d5db;">pending</span>
+                <p class="text-xs">Loading data...</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </main>
   </div>
 
   <script src="app.js"></script>
+  <script src="ai.js"></script>
 
   <!-- Transaction Modal -->
   <div id="transactionModal" class="fixed inset-0 z-[200] flex items-center justify-center" style="display:none;background:rgba(15,23,42,0.55);backdrop-filter:blur(6px);">
